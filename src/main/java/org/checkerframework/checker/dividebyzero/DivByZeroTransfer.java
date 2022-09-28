@@ -72,6 +72,10 @@ public class DivByZeroTransfer extends CFTransfer {
             AnnotationMirror lhs,
             AnnotationMirror rhs) {
         // TODO
+	if(operator==Comparison.EQ)
+		return rhs;
+	if(equal(rhs,reflect(Z.class)) && (operator==Comparison.NE || operator==Comparison.LT || operator==Comparison.GT))
+		return reflect(NZ.class);
         return lhs;
     }
 
@@ -94,6 +98,35 @@ public class DivByZeroTransfer extends CFTransfer {
             AnnotationMirror lhs,
             AnnotationMirror rhs) {
         // TODO
+	if(equal(lhs,reflect(ZB.class)) || equal(rhs,reflect(ZB.class)))
+		return bottom();
+	
+	if(operator==BinaryOperator.PLUS || operator==BinaryOperator.MINUS) {
+		if(equal(lhs,reflect(Top.class)) || equal(rhs,reflect(Top.class)))
+			return top();
+		if(equal(lhs,reflect(NZ.class)) && equal(rhs,reflect(NZ.class)))
+			return reflect(Top.class);
+		if(equal(lhs,reflect(NZ.class)) || equal(rhs,reflect(NZ.class)))
+			return reflect(NZ.class);
+		return reflect(Z.class);
+	}
+
+	if(operator==BinaryOperator.TIMES) {
+		if(equal(lhs,reflect(Top.class)) || equal(rhs,reflect(Top.class)))
+			return top();
+		if(equal(lhs,reflect(Z.class)) || equal(rhs,reflect(Z.class)))
+			return reflect(Z.class);
+		return reflect(NZ.class);
+	}
+
+	if(operator==BinaryOperator.DIVIDE) {
+		if(equal(rhs,reflect(Z.class)))
+			return reflect(Z.class);
+		if(equal(lhs,reflect(Z.class)) && equal(rhs,reflect(NZ.class)))
+			return reflect(Z.class);
+		//the other cases should flow out and become top()
+	}
+
         return top();
     }
 
