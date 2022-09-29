@@ -7,6 +7,9 @@ class Bar {
         int zero = 0;
 	// :: error: divide.by.zero
 	int x = one % zero;
+	int y = one;
+	// :: error: divide.by.zero
+	y %= zero;
     }
 
 }
