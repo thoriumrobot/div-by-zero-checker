@@ -119,8 +119,13 @@ public class DivByZeroTransfer extends CFTransfer {
 		return reflect(NZ.class);
 	}
 
-	if(operator==BinaryOperator.MOD && equal(rhs,reflect(Z.class)))
+	if(operator==BinaryOperator.MOD) {
+		if(equal(rhs,reflect(Z.class)))
 			return reflect(Z.class);
+		if(equal(lhs,reflect(Z.class)) && equal(rhs,reflect(NZ.class)))
+			return reflect(Z.class);
+		return top();
+	}
 
 	if(operator==BinaryOperator.DIVIDE) {
 		if(equal(rhs,reflect(Z.class)))
